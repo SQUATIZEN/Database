@@ -1,4 +1,4 @@
-CREATE DATABASE ngukurban;
+CREATE DATABASE IF NOT EXISTS ngukurban;
 
 USE ngukurban;
 
