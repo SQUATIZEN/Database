@@ -1,64 +1,63 @@
-import json
 import sqlite3
 
-
 class NgukurBanBackend:
-    def __init__(self):
-        self.conn = sqlite3.connect("ngukurban")
-        self.cursor = self.conn.cursor()
+    def __init__(data):
+        data.conn = sqlite3.connect("ngukurban.db")
+        data.cursor = data.conn.cursor()
+        data.create_tables()  # Panggil fungsi ini untuk membuat tabel jika belum ada
 
-    def create_tables(self):
+    def create_tables(data):
         with open(
             "deteksiban.sql", "r"
-        ) as sqlfile:  # Pastikan nama file dan pathnya sesuai
-            sqlscript = sqlfile.read()
-        self.cursor.executescript(sqlscript)
-        self.conn.commit()  # Simpan perubahan ke database
+        ) as sql_file:  # Pastikan nama file dan pathnya sesuai
+            sql_script = sql_file.read()
+        data.cursor.executescript(sql_script)
+        data.conn.commit()  # Simpan perubahan ke database
 
-    def save_user(
-        self,
-        id_user,
-        username,
-        email,
-        password_user,
-    ):
+    def simpan_user(data, username, email, password_user):
         try:
-            self.cursor.execute(
-                "INSERT INTO user (id_user, username, email, password_user,) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                     id_user,
-                     username,
-                     email,
-                     password_user,
-                ),
+            data.cursor.execute(
+                "INSERT INTO user (username, email, password_user) VALUES (?, ?, ?)",
+                (username, email, password_user),
             )
-            self.conn.commit()  # Simpan perubahan ke database
+            data.conn.commit()  # Simpan perubahan ke database
             return True
         except Exception as e:
             print("Error:", str(e))
             return False
 
-    def save_perbandingan_ban(self, id_perbandingan_ban, id_ban, status_perbandingan_ban):
+    def simpan_ban(data, id_user, foto_ban):
         try:
-            # Mengonversi list deskripsi menjadi format JSON
-        
-            self.cursor.execute(
-                "INSERT INTO perbandingan_ban (id_perbandingan_ban, id_ban, status_perbandingan_ban) VALUES (?, ?, ?)"
+            data.cursor.execute(
+                "INSERT INTO ban (id_user, foto_ban) VALUES (?, ?)",
+                (id_user, foto_ban),
             )
-            self.conn.commit()  # Simpan perubahan ke database
+            data.conn.commit()  # Simpan perubahan ke database
             return True
         except Exception as e:
-            print("Error saat menyimpan data kategori:", str(e))
+            print("Error:", str(e))
             return False
 
-
-    def save_gambar_ban(self, image_ban):
+    def simpan_perbandingan_ban(data, id_ban, status_perbandingan_ban):
         try:
-            self.cursor.execute(
-                "INSERT INTO gambar_ban (image_data) VALUES (?)", (image_ban,)
+            data.cursor.execute(
+                "INSERT INTO perbandingan_ban (id_ban , status_perbandingan_ban) VALUES (?, ?)",
+                (id_ban, status_perbandingan_ban),
             )
-            self.conn.commit()  # Simpan perubahan ke database
+            data.conn.commit()  # Simpan perubahan ke database
             return True
         except Exception as e:
-            print("Error saat menyimpan data gambar:", str(e))
+            print("Error:", str(e))
+            return False
+    
+    def simpan_kondisi_ban(data, id_ban, id_perbandingan_ban, status_kondisi_ban):
+        try:
+            data.cursor.execute(
+                "INSERT INTO kondisi_ban (id_ban ,id_perbandingan_ban , status_kondisi_ban) VALUES (?, ?, ?)",
+                (id_ban, id_perbandingan_ban, status_kondisi_ban),
+            )
+            data.conn.commit()  # Simpan perubahan ke database
+            return True
+        except Exception as e:
+            print("Error saat menyimpan kondisi ban:", str(e))
             return False
