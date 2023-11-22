@@ -1,3 +1,4 @@
+-- Active: 1700629920401@@127.0.0.1@3306@ngukurban
 CREATE DATABASE IF NOT EXISTS ngukurban;
 
 USE ngukurban;
